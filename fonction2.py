@@ -16,7 +16,7 @@ def token(text):
         else:
             if text[i] == "'":
                 ch += " "
-                l *= -1
+                
             elif text[i] in liste_e:
                 ch += "e"
 
