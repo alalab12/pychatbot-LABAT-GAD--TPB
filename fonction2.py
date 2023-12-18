@@ -5,7 +5,6 @@ from math import *
 
 # "tokenisation" du texte, on enlève les accents et transforme la question posé en liste de caractère
 def token(text):
-    l = -1
     liste_e = ["é", "è", "ê", "ë"]
     liste_a = ["à", "â"]
     liste_u = ["ù","û"]
