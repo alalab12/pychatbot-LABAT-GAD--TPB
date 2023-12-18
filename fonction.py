@@ -2,6 +2,7 @@ import math
 import os
 
 
+
 #crée un repertoire contenant les fichiers
 def list_of_files(directory, extension):
 
@@ -11,7 +12,7 @@ def list_of_files(directory, extension):
             files_names.append(filename)
     return files_names
 
-directory = "./discours"
+directory = "discours\\"
 files_names = list_of_files(directory, "txt")
 
 
@@ -54,8 +55,7 @@ def textes_minuscule():
                         contenu_propre += chr(ord(caractere) + 32)
                     else:
                         contenu_propre += caractere
-            return cleaned.write(contenu_propre)
-
+            cleaned.write(contenu_propre)
 
 
 
@@ -83,12 +83,11 @@ def textes_caractere():
                         contenu_propre += "i"
                     elif caractere not in [".", ",","?",":",";","!"]:
                         contenu_propre += caractere
-            return cleaned2.write(contenu_propre)
+            cleaned2.write(contenu_propre)
 
 
 #calculer le TF
 def tf(text):
-    global Tf
     mots = text.split(" ")
     Tf = {}
     for mot in mots:
@@ -96,12 +95,11 @@ def tf(text):
             Tf[mot] += 1
         else:
             Tf[mot] = 1
-    return(Tf)
+    return Tf
 
 
 #calculer l'Idf
 def idf():
-    global Idf
     Idf = {}
     nombre_fichier = 0
     for file in list_of_files("./cleaned", ".txt"):
@@ -117,36 +115,128 @@ def idf():
                         Idf[mot] = 1
         nombre_fichier += 1
     for value in Idf:
-        Idf[value] = math.log(1 / (Idf[value] / nombre_fichier))
-    return(Idf)
-print(idf())
+        Idf[value] = math.log(nombre_fichier/Idf[value])
+    return Idf
 
-#calculer le TF-IDF
-def TF_IDF(text):
-    global tf_idf
-    for i in Idf:
-        tf_idf = {key: Idf[key] * Tf.get(key, 0) for key in Idf.keys()}
-        return tf_idf
-
-for fichier in files_names:
-    with open("cleaned2\\" + fichier, "r", encoding = "utf-8") as f:
-        text = f.read()
-print(TF_IDF(text))
-
-
-
+#calcul de la matrice tf idf
+def TF_IDF():
+    tf_list = []
+    idf_liste = idf()
+    mat = []
+    l_file = list_of_files("./cleaned2","txt")
+    for file in l_file:
+        with (open("./cleaned2/"+file, "r") as f):
+            tf_fichier = tf(f.read())
+            tf_list.append(tf_fichier)
+    j=0
+    for val in idf_liste:
+        mat.append([])
+        for i in range(len(l_file)):
+            if val in tf_list[i]:
+                mat[j].append(tf_list[i][val]*idf_liste[val])
+            else:
+                mat[j].append(0)
+        j+=1
+    return mat
 
 
 #Afficher les mots avec le score tf-idf le plus faible
 def mot_less():
+    idf_liste = idf()
     Mot_less = []
-    for mot in tf_idf:
-        if tf_idf[mot] == 0:
+    for mot in idf_liste:
+        if idf_liste[mot] == 0:
             Mot_less.append(mot)
     return Mot_less
 
 
 
 #afficher le mot avec le score tf-idf le plus élevé
-def mot_strong():
-        return max(tf_idf)
+def mot_strong(text):
+    tf_idf_liste = TF_IDF(text)
+    key = list(TF_IDF(text).keys())
+    mot = 0
+    id = 0
+    id_max = 0
+    for i in tf_idf_liste:
+        if tf_idf_liste[i] > mot:
+            mot = tf_idf_liste[i]
+            id_max=id
+        id +=1
+    return mot,key[id_max]
+
+
+#Trouve les mots les utilisés par Chirac
+def Chirac():
+    with open("cleaned2/Nomination_Chirac1.txt", "r") as f, open("cleaned2/Nomination_Chirac2.txt", "r") as f2:
+        fichier1 = tf(f.read())
+        fichier2 = tf(f2.read())
+        mot = 0
+        id_max = 0
+        for i in fichier2:
+            print(fichier2[i], i)
+            if fichier2[i] > mot and fichier2[i]!="\n":
+
+                mot = fichier2[i]
+                id_max = i
+        for i in fichier1:
+            if fichier1[i] > mot and fichier2[i]!="\n":
+                mot = fichier1[i]
+                id_max = i
+        return mot, id_max
+
+#Montre les présidents qui ont utilisés le mot Nation et celui qui l'a le plus répété
+def mot_nation():
+    l = []
+    mot = "Nation"
+    if os.path.exists("cleaned2/Nomination_Giscard dEstaing.txt") == True:
+            l.append("Giscard")
+
+    if os.path.exists("cleaned2/Nomination_Chirac1.txt")==True or os.path.exists("cleaned2/Nomination_Chirac2.txt")==True:
+        l.append("Chirac")
+
+    if os.path.exists("cleaned2/Nomination_Hollande.txt")==True:
+        l.append("Hollande")
+
+    if os.path.exists("cleaned2/Nomination_Macron.txt")==True:
+        l.append("Macron")
+
+    if os.path.exists("cleaned2/Nomination_Mitterrand1.txt")==True or os.path.exists("cleaned2/Nomination_Mitterrand2.txt")==True:
+        l.append("Mitterand")
+
+    if os.path.exists("cleaned2/Nomination_Sarkozy.txt")==True:
+        l.append("Sarkozy")
+
+    print(l)
+
+
+# trouve le premier président à parler à évoquer le climat ou l'écologie
+def first_climat() :
+    for fichier in files_names:
+        with open("cleaned2\\" + fichier, "r", encoding='utf-8') as cleaned2 :
+            contenu = cleaned2.readlines()
+            for ligne in contenu:
+                for caractere in ligne :
+                    if caractere == "climat" or caractere == "ecologie":
+                        print(fichier)
+
+    return fichier
+
+
+
+
+#def autres():
+
+#nous n'avons pas compris comment faire cette fonction
+
+
+
+
+
+
+max = 0
+for fichier in files_names:
+    with open("cleaned2\\" + fichier, "r", encoding = "utf-8") as f:
+        text = f.read()
+
+
