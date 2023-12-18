@@ -188,26 +188,35 @@ def Chirac():
 #Montre les présidents qui ont utilisés le mot Nation et celui qui l'a le plus répété
 def mot_nation():
     l = []
-    mot = "Nation"
-    if os.path.exists("cleaned2/Nomination_Giscard dEstaing.txt") == True:
+    mot = "nation"
+    with open("cleaned2/Nomination_Giscard dEstaing.txt") as f:
+        if mot in f.read():
             l.append("Giscard")
 
-    if os.path.exists("cleaned2/Nomination_Chirac1.txt")==True or os.path.exists("cleaned2/Nomination_Chirac2.txt")==True:
-        l.append("Chirac")
+    with open("cleaned2/Nomination_Chirac1.txt") as f, open("cleaned2/Nomination_Chirac2.txt") as v :
+        if mot in f.read() or mot in v.read():
+            l.append("Chirac")
 
-    if os.path.exists("cleaned2/Nomination_Hollande.txt")==True:
-        l.append("Hollande")
+    with open("cleaned2/Nomination_Hollande.txt") as f:
+        if mot in f.read():
+            l.append("Hollande")
 
-    if os.path.exists("cleaned2/Nomination_Macron.txt")==True:
-        l.append("Macron")
+    with open("cleaned2/Nomination_Macron.txt") as f:
+        if mot in f.read():
+            l.append("Macron")
 
-    if os.path.exists("cleaned2/Nomination_Mitterrand1.txt")==True or os.path.exists("cleaned2/Nomination_Mitterrand2.txt")==True:
-        l.append("Mitterand")
+    with open("cleaned2/Nomination_Sarkozy.txt") as f:
+        if mot in f.read():
+            l.append("Sarkozy")
 
-    if os.path.exists("cleaned2/Nomination_Sarkozy.txt")==True:
-        l.append("Sarkozy")
 
-    print(l)
+    with open("cleaned2/Nomination_Mitterrand1.txt") as f, open("cleaned2/Nomination_Mitterrand2.txt") as v :
+        if mot in f.read() or mot in v.read():
+            l.append("Mitterand")
+    return l
+
+print(mot_nation())
+
 
 
 # trouve le premier président à parler à évoquer le climat ou l'écologie
