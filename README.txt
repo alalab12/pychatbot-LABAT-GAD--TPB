@@ -45,7 +45,7 @@ Partie I :
 - Montre le premier président à parler d'écologie (non réussi)
 - Montre les autres mot non important utilisés par les présidents (non réussi)
 
-* Certaines les fonctions ne fonctionnent pas encore correctement
+
 
 Partie II :
 
